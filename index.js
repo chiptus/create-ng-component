@@ -1,9 +1,40 @@
-const Mustache = require('mustache');
+#!/usr/bin/env node
 const fs = require('fs');
+const Mustache = require('mustache');
 
-const name = process.argv[2];
+let component = `
+import templateUrl from './{{snakeCase}}.tmpl.html';
+const name = '{{camelCase}}';
 
-main(name);
+export default {
+  templateUrl,
+  name,
+  bindings: {},
+  controller: Ctrl,
+};
+
+function Ctrl() {}
+
+`;
+
+let index = `
+import {{camelCase}} from './{{snakeCase}}.js'
+export default {{camelCase}}
+
+`;
+
+let template = `<div class="{{snakeCase}}"></div>`
+
+
+const program = require('commander');
+
+program
+  .arguments('<name>')
+  .action(name => {
+    return main(name)
+  })
+  .parse(process.argv)
+
 
 async function main(name) {
   const { camelCase, snakeCase } = parseName(name);
@@ -11,9 +42,9 @@ async function main(name) {
   await makeDirIfNotExist(snakeCase);
 
   const templates = {
-    index: await getFile('./templates/index.js'),
-    component: await getFile('./templates/component.js'),
-    template: await getFile('./templates/template.html'),
+    index,
+    component,
+    template,
   };
   const rendered = renderTemplates(templates, { camelCase, snakeCase });
 
@@ -81,3 +112,5 @@ function makeDirIfNotExist(dirname) {
     )
   );
 }
+
+
