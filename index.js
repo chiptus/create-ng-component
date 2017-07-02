@@ -23,18 +23,16 @@ export default {{camelCase}}
 
 `;
 
-let template = `<div class="{{snakeCase}}"></div>`
-
+let template = `<div class="{{snakeCase}}"></div>`;
 
 const program = require('commander');
 
 program
   .arguments('<name>')
   .action(name => {
-    return main(name)
+    return main(name);
   })
-  .parse(process.argv)
-
+  .parse(process.argv);
 
 async function main(name) {
   const { camelCase, snakeCase } = parseName(name);
@@ -100,7 +98,7 @@ async function writeFile(filename, fileInput) {
 
 function parseName(name) {
   const snakeCase = name;
-  const camelCase = name.replace(/-([A-Za-z])/, (s, c) => c.toUpperCase());
+  const camelCase = name.replace(/-([A-Za-z])/g, (s, c) => c.toUpperCase());
   return { snakeCase, camelCase };
 }
 
@@ -112,5 +110,3 @@ function makeDirIfNotExist(dirname) {
     )
   );
 }
-
-
