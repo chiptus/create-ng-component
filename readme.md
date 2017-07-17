@@ -49,6 +49,13 @@ function Ctrl() {}
 <div class="component-name"></div>
 ```
 
+**component-name.css**
+```
+.component-name{
+
+}
+```
+
 ## Using
 - **commander**: for controlling command line arguments.
 - **mustache**: for compiling the templates.
