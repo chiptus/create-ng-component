@@ -2,8 +2,7 @@
 const fs = require('fs');
 const Mustache = require('mustache');
 
-let component = `
-import templateUrl from './{{snakeCase}}.tmpl.html';
+let component = `import templateUrl from './{{snakeCase}}.tmpl.html';
 const name = '{{camelCase}}';
 
 export default {
@@ -17,13 +16,16 @@ function Ctrl() {}
 
 `;
 
-let index = `
-import {{camelCase}} from './{{snakeCase}}.js'
+let index = `import {{camelCase}} from './{{snakeCase}}.js'
 export default {{camelCase}}
 
 `;
 
 let template = `<div class="{{snakeCase}}"></div>`;
+
+let style = `.{{snakeCase}} {
+  
+}`;
 
 const program = require('commander');
 
@@ -43,6 +45,7 @@ async function main(name) {
     index,
     component,
     template,
+    style,
   };
   const rendered = renderTemplates(templates, { camelCase, snakeCase });
 
@@ -59,19 +62,22 @@ async function saveFiles(componentName, renderedTemplates) {
     `${componentName}/${componentName}.tmpl.html`,
     renderedTemplates.template
   );
+  await writeFile(
+    `${componentName}/${componentName}.css`,
+    renderedTemplates.style
+  );
 }
 
 function renderTemplates(templates, { camelCase, snakeCase }) {
-  const index = Mustache.render(templates.index, { camelCase, snakeCase });
-  const component = Mustache.render(templates.component, {
-    camelCase,
-    snakeCase,
-  });
-  const template = Mustache.render(templates.template, {
-    camelCase,
-    snakeCase,
-  });
-  return { index, component, template };
+  const index = render(templates.index);
+  const component = render(templates.component);
+  const template = render(templates.template);
+  const style = render(templates.style);
+  return { index, component, template, style };
+
+  function render(template) {
+    return Mustache.render(template, { camelCase, snakeCase });
+  }
 }
 
 async function getFile(filename) {
